@@ -31,10 +31,7 @@ public class Storage
 
     public bool IsValidChoice(int choice)
     {
-        if (DrinkIsInStock(choice) && ChoiceExists(choice))
-            return true;
-
-        return false;
+        return ChoiceExists(choice) && DrinkIsInStock(choice);
     }
 
     private bool DrinkIsInStock(int choice)
@@ -44,7 +41,11 @@ public class Storage
 
     private bool ChoiceExists(int choice)
     {
-        return 0 <= choice && choice <= DrinkInventory.Count;
+        if (0 <= choice && choice <= DrinkInventory.Count)
+            return true;
+
+        //Console.WriteLine("Ugyldig valg");
+        return false;
     }
 
     //public void RestockDrinks(List<Drink> drinksToRestock)
