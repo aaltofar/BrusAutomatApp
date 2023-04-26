@@ -1,4 +1,5 @@
 ﻿namespace BrusAutomat;
+
 public class Storefront
 {
     private int AvailableChoices { get; set; }
@@ -7,6 +8,14 @@ public class Storefront
     public bool ChooseDrink(int choice)
     {
         if (choice > 0 && choice < AvailableChoices)
+            return true;
+
+        return false;
+    }
+
+    public bool HasEnoughMoney(double price)
+    {
+        if (CustomerCoinBalance > price)
             return true;
 
         return false;
@@ -22,6 +31,5 @@ public class Storefront
     {
         AvailableChoices = choices;
     }
-
 }
 

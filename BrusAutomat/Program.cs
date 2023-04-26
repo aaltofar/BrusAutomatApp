@@ -1,26 +1,41 @@
 ﻿using System.Text;
 using BrusAutomat;
+
 Console.OutputEncoding = Encoding.UTF8;
 
-var vendingMachine = new VendingMachine(new Storage(), new Storefront());
 
-vendingMachine.Inventory.AddNewDrink(new Farris("Farris", 15, 10));
-vendingMachine.Inventory.AddNewDrink(new Fanta("Fanta", 20, 5));
-vendingMachine.Inventory.AddNewDrink(new CocaCola("Coca-Cola", 17.50, 7));
+var vendingMachine = new VendingMachine();
+
+vendingMachine.Inventory.AddNewDrink("Fanta", 15.50, 10);
+vendingMachine.Inventory.AddNewDrink("Coca-Cola", 17.50, 10);
+vendingMachine.Inventory.AddNewDrink("Pepsi", 16.50, 12);
 
 vendingMachine.Vendor.RefreshChoiceList(vendingMachine.Inventory.DrinkInventory.Count);
 
 vendingMachine.Vendor.InsertCoins(20);
+int choice = 1;
 
-if (vendingMachine.Vendor.ChooseDrink(2))
+while (true)
 {
-    Console.WriteLine($"Du valgte nummer 2, som tilsvarer {vendingMachine.Inventory.DrinkInventory[2].Name}");
-    Console.WriteLine($"Prisen er {vendingMachine.Inventory.DrinkInventory[2].Price}kr");
+    if (vendingMachine.Inventory.IsValidChoice(choice))
+    {
+        var chosenDrink = vendingMachine.Inventory.DrinkInventory[choice];
 
-    var transaction = new Transaction(vendingMachine.Inventory.DrinkInventory[2], vendingMachine.Vendor.CustomerCoinBalance);
+        Console.WriteLine($"Du valgte nummer {choice}, som tilsvarer {chosenDrink.Name}(pris {chosenDrink.Price}kr)");
 
-    var change = transaction.MakeTransaction();
-    vendingMachine.Inventory.ExpendDrink(vendingMachine.Inventory.DrinkInventory[2]);
-    Console.WriteLine($"Kjøpet er fullført, her er ditt veksel: {change}kr");
+        if (vendingMachine.Vendor.HasEnoughMoney(chosenDrink.Price))
+        {
+            var change = vendingMachine.MakePurchase(chosenDrink);
+
+            vendingMachine.Inventory.ExpendDrink(chosenDrink);
+            Console.WriteLine($"Kjøpet er fullført, her er ditt veksel: {change}kr");
+        }
+        else
+            Console.WriteLine("Kjøpet avbrytes, ikke nok mynt i innkast");
+
+    }
+    else
+        Console.WriteLine("Ugyldig valg, prøv igjen");
+
+    Console.ReadLine();
 }
-

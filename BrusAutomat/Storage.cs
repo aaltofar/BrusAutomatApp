@@ -1,50 +1,66 @@
 ﻿namespace BrusAutomat;
+
 public class Storage
 {
     private double CashSupply { get; set; }
-    public List<IDrink> DrinkInventory { get; set; }
+    public List<Drink> DrinkInventory { get; init; }
 
     public Storage()
     {
-        DrinkInventory = new List<IDrink>();
+        DrinkInventory = new List<Drink>();
     }
 
-    public void RestockDrinks(List<IDrink> drinksToRestock)
+    public void AddCashToStorage(double cashToAdd)
     {
-        foreach (var drink in drinksToRestock)
-            foreach (var d in DrinkInventory)
-                if (drink.Name == d.Name)
-                    d.Quantity += drink.Quantity;
+        CashSupply += cashToAdd;
     }
 
-    public void ExpendDrink(IDrink drinkToGive)
+    public void ExpendDrink(Drink drinkToGive)
     {
-        for (int i = 0; i < DrinkInventory.Count; i++)
+        for (var i = 0; i < DrinkInventory.Count; i++)
             if (drinkToGive.Name == DrinkInventory[i].Name)
                 DrinkInventory[i].Quantity--;
 
         Console.WriteLine($"Utleverer 1stk {drinkToGive.Name}");
     }
 
-    public void AddNewDrink(IDrink drinkToAdd)
+    public void AddNewDrink(string drinkName, double drinkPrice, int drinkQuantity)
     {
-        foreach (var d in DrinkInventory)
-            if (drinkToAdd.Name == d.Name)
-                return;
-
-        DrinkInventory.Add(drinkToAdd);
+        DrinkInventory.Add(new Drink(drinkName, drinkPrice, drinkQuantity));
     }
 
-    public void RemoveDrink(IDrink drinkToRemove)
+    public bool IsValidChoice(int choice)
     {
-        for (int i = 0; i < DrinkInventory.Count; i++)
-            if (drinkToRemove.Name == DrinkInventory[i].Name)
-                DrinkInventory.RemoveAt(i);
+        if (DrinkIsInStock(choice) && ChoiceExists(choice))
+            return true;
+
+        return false;
     }
 
-    public void AddCash(double cashToAdd)
+    private bool DrinkIsInStock(int choice)
     {
-        CashSupply += cashToAdd;
+        return DrinkInventory[choice].Quantity > 0;
     }
+
+    private bool ChoiceExists(int choice)
+    {
+        return 0 <= choice && choice <= DrinkInventory.Count;
+    }
+
+    //public void RestockDrinks(List<Drink> drinksToRestock)
+    //{
+    //    foreach (var drink in drinksToRestock)
+    //        foreach (var d in DrinkInventory)
+    //            if (drink.Name == d.Name)
+    //                d.Quantity += drink.Quantity;
+    //}
+
+
+    //public void RemoveDrink(Drink drinkToRemove)
+    //{
+    //    for (var i = 0; i < DrinkInventory.Count; i++)
+    //        if (drinkToRemove.Name == DrinkInventory[i].Name)
+    //            DrinkInventory.RemoveAt(i);
+    //}
 }
 
